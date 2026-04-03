@@ -8,6 +8,7 @@ Shareable skills. Install a skill, then just ask Claude — it handles the rest.
 |-|-------|---------------------------------------------------------------------------------------------------------------------------|
 | <img src="assets/video-downloader-icon.svg" width="20"/> | [**video-downloader**](video-downloader/) | Say "download this video" + paste a URL. Claude downloads it via yt-dlp. Supports YouTube, Reddit, Twitter/X, and others. |
 | <img src="assets/notes-manager-icon.svg" width="20"/> | [**notes-manager**](notes-manager/) | Say "create a note", "search notes", or "list my notes". Claude manages your macOS Notes app — create, read, search, append, delete, and organize notes and folders. |
+| <img src="assets/daily-journal-icon.svg" width="20"/> | [**daily-journal**](daily-journal/) | Say "journal this" or "what did I do today". Claude keeps a daily self-journal in Notes — timestamped first-person entries, daily review, weekly summaries. |
 
 ## Install
 
@@ -62,6 +63,12 @@ Just talk to Claude:
 > Append "buy flowers" to my Shopping List note
 
 > Delete the note called "Old Draft"
+
+> Journal this — I built a notes manager skill today
+
+> What did I do today?
+
+> Review my week
 ```
 
 Claude recognizes the intent, the skill activates, and handles the rest.
