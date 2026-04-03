@@ -7,6 +7,7 @@ Shareable skills. Install a skill, then just ask Claude — it handles the rest.
 | | Skill | What it does                                                                                                              |
 |-|-------|---------------------------------------------------------------------------------------------------------------------------|
 | <img src="assets/video-downloader-icon.svg" width="20"/> | [**video-downloader**](video-downloader/) | Say "download this video" + paste a URL. Claude downloads it via yt-dlp. Supports YouTube, Reddit, Twitter/X, and others. |
+| <img src="assets/notes-manager-icon.svg" width="20"/> | [**notes-manager**](notes-manager/) | Say "create a note", "search notes", or "list my notes". Claude manages your macOS Notes app — create, read, search, append, delete, and organize notes and folders. |
 
 ## Install
 
@@ -51,9 +52,19 @@ Just talk to Claude:
 > Grab the audio from https://soundcloud.com/artist/track
 
 > Download this in 720p https://vimeo.com/123456789
+
+> Create a note called "Shopping List" with milk, eggs, bread
+
+> Search my notes for "meeting"
+
+> List my notes in the Work folder
+
+> Append "buy flowers" to my Shopping List note
+
+> Delete the note called "Old Draft"
 ```
 
-Claude recognizes the intent, the skill activates, and the file lands in `~/Downloads`.
+Claude recognizes the intent, the skill activates, and handles the rest.
 
 ## License
 
