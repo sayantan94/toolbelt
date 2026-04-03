@@ -1,11 +1,11 @@
 ---
 name: notes-manager
-description: Interact with macOS Notes app. Use when user says "create a note", "save this to notes", "jot this down", "find my note about", "search notes", "list my notes", "show notes in folder", "append to note", "add this to my note", "delete note", "move note to folder", "create a folder", or wants to read, search, organize, or manage their Apple Notes.
+description: Manages macOS Notes app — creates, reads, searches, lists, appends to, deletes, and organizes notes and folders. Use when working with Apple Notes or when the user mentions "create a note", "save this to notes", "jot this down", "find my note about", "search notes", "list my notes", "append to note", "delete note", "move note to folder", or "create a folder".
 ---
 
 # Notes Manager
 
-Interact with macOS Notes.app — create, read, search, list, append, delete, and organize notes and folders.
+Manages macOS Notes.app — create, read, search, list, append, delete, and organize notes and folders.
 
 ## Step 1: Check Dependencies
 
@@ -107,11 +107,11 @@ end tell'
 
 Replace `SEARCH_TERM` with the user's search query.
 
-Show the user the name and modification date for each match. If multiple notes match, list them all and ask the user which one they want to open or work with.
+Show the user the title and modification date for each match. If multiple notes match, list them all and ask the user which one they want to open or work with.
 
 ## Read Note
 
-First, find the note by title using the search approach above. Use the **exact note name** returned by the search (not the user's original query) in the `name is` predicate below:
+First, find the note using the Search Notes approach above. Use the **exact note title** returned by the search (not the user's original query) in the `name is` predicate below:
 
 ```bash
 osascript -e 'tell application "Notes"
@@ -162,7 +162,7 @@ osascript -e 'tell application "Notes"
 end tell'
 ```
 
-Notes.app returns notes in its default order. Show name and modification date for each note. Default limit is 20 notes. If the user asks for more, show all.
+Notes.app returns notes in its default order. Show title and modification date for each note. Default limit is 20 notes. If the user asks for more, show all.
 
 ## Append to Note
 
@@ -211,7 +211,7 @@ osascript -e 'tell application "Notes"
 end tell'
 ```
 
-Display the list of folder names to the user.
+Display the folder names to the user.
 
 ## Create Folder
 
