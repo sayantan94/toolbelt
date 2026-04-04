@@ -12,7 +12,7 @@ Manages an Obsidian vault — create, read, search, list, append, delete, and or
 Check if the config file exists and contains the vault path:
 
 ```bash
-cat ~/.config/obsidian-skill/config 2>/dev/null
+cat ~/obsidian-skill/config 2>/dev/null
 ```
 
 The config file should contain a single line: `OBSIDIAN_VAULT_PATH=/path/to/vault`
@@ -24,10 +24,10 @@ The config file should contain a single line: `OBSIDIAN_VAULT_PATH=/path/to/vaul
 3. Write the config:
 
 ```bash
-mkdir -p ~/.config/obsidian-skill
+mkdir -p ~/obsidian-skill
 # Expand ~ to $HOME in the user-provided path
 OBSIDIAN_VAULT_PATH="${USER_PATH/#\~/$HOME}"
-echo "OBSIDIAN_VAULT_PATH=\"$OBSIDIAN_VAULT_PATH\"" > ~/.config/obsidian-skill/config
+echo "OBSIDIAN_VAULT_PATH=\"$OBSIDIAN_VAULT_PATH\"" > ~/obsidian-skill/config
 ```
 
 4. Verify the vault directory exists:
@@ -49,7 +49,7 @@ This creates the vault directory with the `.obsidian/` config folder that Obsidi
 **Load the config at the start of every operation:**
 
 ```bash
-source ~/.config/obsidian-skill/config
+source ~/obsidian-skill/config
 if [ -z "$OBSIDIAN_VAULT_PATH" ] || [ ! -d "$OBSIDIAN_VAULT_PATH" ]; then
   # run first-use flow (ask user for path)
 fi
