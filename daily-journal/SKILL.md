@@ -48,7 +48,7 @@ Proactively maintains a daily self-journal in an Obsidian vault using plain mark
 Check if the config file exists and contains the vault path:
 
 ```bash
-cat ~/.config/obsidian-skill/config 2>/dev/null
+cat ~/obsidian-skill/config 2>/dev/null
 ```
 
 The config file should contain a single line: `OBSIDIAN_VAULT_PATH=/path/to/vault`
@@ -60,10 +60,10 @@ The config file should contain a single line: `OBSIDIAN_VAULT_PATH=/path/to/vaul
 3. Write the config:
 
 ```bash
-mkdir -p ~/.config/obsidian-skill
+mkdir -p ~/obsidian-skill
 # Expand ~ to $HOME in the user-provided path
 OBSIDIAN_VAULT_PATH="${USER_PATH/#\~/$HOME}"
-echo "OBSIDIAN_VAULT_PATH=\"$OBSIDIAN_VAULT_PATH\"" > ~/.config/obsidian-skill/config
+echo "OBSIDIAN_VAULT_PATH=\"$OBSIDIAN_VAULT_PATH\"" > ~/obsidian-skill/config
 ```
 
 4. Verify the vault directory exists:
@@ -85,7 +85,7 @@ This creates the vault directory with the `.obsidian/` config folder that Obsidi
 **Load the config at the start of every operation:**
 
 ```bash
-source ~/.config/obsidian-skill/config
+source ~/obsidian-skill/config
 if [ -z "$OBSIDIAN_VAULT_PATH" ] || [ ! -d "$OBSIDIAN_VAULT_PATH" ]; then
   # run first-use flow (ask user for path)
 fi
@@ -133,19 +133,19 @@ cat "$MEMORY_FILE" 2>/dev/null
 Write the file with YAML frontmatter, an H1 header with the date, and the first timestamped entry. Extract tags from the entry content automatically.
 
 ```bash
-cat << 'JOURNALEOF' > "$JOURNAL_FILE"
+cat << JOURNALEOF > "$JOURNAL_FILE"
 ---
-created: YYYY-MM-DD
+created: $TODAY
 tags:
   - daily-journal
   - TAG1
   - TAG2
 ---
 
-# YYYY-MM-DD — Day, Month D, Year
+# $TODAY — $DAY_DISPLAY
 
-## HH:MM AM/PM
-First-person entry with [[wikilinks]] and #tags
+## $TIMESTAMP
+ENTRY_TEXT_HERE
 JOURNALEOF
 ```
 
@@ -164,10 +164,10 @@ Review the existing content. Then write a new entry that builds on the day's nar
 **Append a new timestamped section:**
 
 ```bash
-cat << 'JOURNALEOF' >> "$JOURNAL_FILE"
+cat << JOURNALEOF >> "$JOURNAL_FILE"
 
-## HH:MM AM/PM
-First-person entry with [[wikilinks]] and #tags
+## $TIMESTAMP
+ENTRY_TEXT_HERE
 JOURNALEOF
 ```
 
@@ -182,14 +182,14 @@ After writing the journal entry, update memory.md to maintain the rolling contex
 **If memory.md does not exist, create it:**
 
 ```bash
-cat << 'MEMEOF' > "$MEMORY_FILE"
+cat << MEMEOF > "$MEMORY_FILE"
 ---
-last-updated: YYYY-MM-DD
+last-updated: $TODAY
 ---
 
 ## Recent Context
 
-- **YYYY-MM-DD:** One-line summary with [[wikilinks]] and #tags
+- **$TODAY:** ENTRY_TEXT_HERE
 MEMEOF
 ```
 
@@ -197,9 +197,29 @@ MEMEOF
 
 1. Read the current contents
 2. Update the `last-updated` field in frontmatter to today's date
-3. Add a new one-line summary at the top of the "## Recent Context" list: `- **YYYY-MM-DD:** Summary with [[wikilinks]] and #tags`
+3. Add a new one-line summary at the top of the "## Recent Context" list: `- **$TODAY:** Summary with [[wikilinks]] and #tags`
 4. Remove entries older than 7 days
 5. Write the updated file back
+
+**7-day rotation — concrete approach:**
+
+```bash
+# Get cutoff date (7 days ago on macOS)
+CUTOFF=$(date -v-7d "+%Y-%m-%d")
+
+# Read memory.md, keep frontmatter and only entries where date >= CUTOFF
+awk -v cutoff="$CUTOFF" '
+  /^---$/ { front++; print; next }
+  front < 2 { print; next }
+  /^\- \*\*[0-9]{4}-[0-9]{2}-[0-9]{2}:\*\*/ {
+    match($0, /[0-9]{4}-[0-9]{2}-[0-9]{2}/)
+    d = substr($0, RSTART, RLENGTH)
+    if (d >= cutoff) print
+    next
+  }
+  { print }
+' "$MEMORY_FILE" > "${MEMORY_FILE}.tmp" && mv "${MEMORY_FILE}.tmp" "$MEMORY_FILE"
+```
 
 memory.md format:
 
@@ -249,10 +269,22 @@ Obsidian creates graph nodes even for notes that don't exist yet, so wikilinks a
 
 These run only when the user explicitly asks.
 
+**Always run Step 1 (Load Config) first before any operation below.** After sourcing the config, verify the vault path is valid:
+
+```bash
+source ~/obsidian-skill/config
+if [ -z "$OBSIDIAN_VAULT_PATH" ] || [ ! -d "$OBSIDIAN_VAULT_PATH" ]; then
+  # run first-use flow (Step 1) — ask user for vault path, write config
+fi
+```
+
 ### View Today
 
 ```bash
-source ~/.config/obsidian-skill/config
+source ~/obsidian-skill/config
+if [ -z "$OBSIDIAN_VAULT_PATH" ] || [ ! -d "$OBSIDIAN_VAULT_PATH" ]; then
+  # run first-use flow (Step 1)
+fi
 TODAY=$(date "+%Y-%m-%d")
 YEAR=$(date "+%Y")
 MONTH=$(date "+%m")
@@ -271,7 +303,10 @@ Read and display the contents of today's journal file.
 Parse the user's date to `YYYY-MM-DD` format, then compute the path and read:
 
 ```bash
-source ~/.config/obsidian-skill/config
+source ~/obsidian-skill/config
+if [ -z "$OBSIDIAN_VAULT_PATH" ] || [ ! -d "$OBSIDIAN_VAULT_PATH" ]; then
+  # run first-use flow (Step 1)
+fi
 TARGET_DATE="YYYY-MM-DD"  # parsed from user input
 TARGET_YEAR=$(echo "$TARGET_DATE" | cut -d- -f1)
 TARGET_MONTH=$(echo "$TARGET_DATE" | cut -d- -f2)
@@ -286,7 +321,10 @@ fi
 ### View Week
 
 ```bash
-source ~/.config/obsidian-skill/config
+source ~/obsidian-skill/config
+if [ -z "$OBSIDIAN_VAULT_PATH" ] || [ ! -d "$OBSIDIAN_VAULT_PATH" ]; then
+  # run first-use flow (Step 1)
+fi
 find "$OBSIDIAN_VAULT_PATH/daily-journal" -name "*.md" -not -name "memory.md" -type f | sort -r | head -7
 ```
 
@@ -295,7 +333,10 @@ Read each of the returned files and display their contents. For a **weekly summa
 ### Search Journal
 
 ```bash
-source ~/.config/obsidian-skill/config
+source ~/obsidian-skill/config
+if [ -z "$OBSIDIAN_VAULT_PATH" ] || [ ! -d "$OBSIDIAN_VAULT_PATH" ]; then
+  # run first-use flow (Step 1)
+fi
 grep -rl "SEARCH_TERM" "$OBSIDIAN_VAULT_PATH/daily-journal" --include="*.md" | head -20
 ```
 
