@@ -25,7 +25,9 @@ The config file should contain a single line: `OBSIDIAN_VAULT_PATH=/path/to/vaul
 
 ```bash
 mkdir -p ~/.config/obsidian-skill
-echo "OBSIDIAN_VAULT_PATH=/absolute/path/to/vault" > ~/.config/obsidian-skill/config
+# Expand ~ to $HOME in the user-provided path
+OBSIDIAN_VAULT_PATH="${USER_PATH/#\~/$HOME}"
+echo "OBSIDIAN_VAULT_PATH=\"$OBSIDIAN_VAULT_PATH\"" > ~/.config/obsidian-skill/config
 ```
 
 4. Verify the vault directory exists:
@@ -48,6 +50,9 @@ This creates the vault directory with the `.obsidian/` config folder that Obsidi
 
 ```bash
 source ~/.config/obsidian-skill/config
+if [ -z "$OBSIDIAN_VAULT_PATH" ] || [ ! -d "$OBSIDIAN_VAULT_PATH" ]; then
+  # run first-use flow (ask user for path)
+fi
 VAULT="$OBSIDIAN_VAULT_PATH"
 ```
 
@@ -178,9 +183,11 @@ Where `TARGET_DIR` is `$VAULT` for the root or `$VAULT/FOLDER_NAME` for a specif
 To list all notes recursively across the vault:
 
 ```bash
-find "$VAULT" -name "*.md" -not -path "*/.obsidian/*" -printf "%T@ %p\n" 2>/dev/null | sort -rn | head -20 | while read -r ts path; do
+find "$VAULT" -name "*.md" -not -path "*/.obsidian/*" | while read -r path; do
+  stat -f "%m %N" "$path"
+done | sort -rn | head -20 | while read -r ts path; do
   REL_PATH="${path#$VAULT/}"
-  MOD_DATE=$(stat -f "%Sm" -t "%Y-%m-%d %H:%M" "$path" 2>/dev/null || stat -c "%y" "$path" 2>/dev/null | cut -d. -f1)
+  MOD_DATE=$(stat -f "%Sm" -t "%Y-%m-%d %H:%M" "$path" 2>/dev/null)
   echo "$REL_PATH | modified: $MOD_DATE"
 done
 ```
