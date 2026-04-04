@@ -25,8 +25,11 @@ cd toolbelt
 Each folder is a skill. To add one to your Claude, symlink it into `~/.claude/skills/`:
 
 ```bash
-# Example: install the video-downloader skill
+# Install all skills
 ln -s "$(pwd)/video-downloader" ~/.claude/skills/video-downloader
+ln -s "$(pwd)/notes-manager" ~/.claude/skills/notes-manager
+ln -s "$(pwd)/daily-journal" ~/.claude/skills/daily-journal
+ln -s "$(pwd)/obsidian-writer" ~/.claude/skills/obsidian-writer
 ```
 
 This creates a link so Claude can find the skill. Any time you `git pull` to update the repo, the skill updates too.
@@ -80,10 +83,29 @@ Just talk to Claude:
 
 Claude recognizes the intent, the skill activates, and handles the rest.
 
-### Triggering the Journal Manually
+### Daily Journal
 
-The daily-journal skill runs automatically at the end of every work session. To trigger it manually:
+The daily-journal is a **sentinel skill** — it runs automatically at the end of every work session where something meaningful was done. No need to ask.
 
+**To enable automatic journaling**, add this to your `~/.claude/CLAUDE.md`:
+
+```markdown
+## Daily Journal (MANDATORY)
+
+BEFORE completing any conversation where code was written, files were modified, features were built, bugs were fixed, or any meaningful work was done:
+
+1. Check if `~/.claude/skills/daily-journal/SKILL.md` exists
+2. If it does, invoke the daily-journal skill to log a first-person summary of what was accomplished
+3. Confirm: "Logged to today's journal."
+
+This is not optional. Every working session must be journaled. Do not skip this step.
+```
+
+This tells Claude to journal every session automatically. The skill handles the rest — it creates the Obsidian vault on first use, writes timestamped entries with tags and `[[wikilinks]]`, and maintains a rolling `memory.md` for continuity across sessions.
+
+**To trigger it manually:**
+
+```
 > Journal this — I built the auth system today
 
 > What did I do today?
@@ -91,6 +113,7 @@ The daily-journal skill runs automatically at the end of every work session. To 
 > Review my week
 
 > Search journal for "obsidian"
+```
 
 ## License
 
