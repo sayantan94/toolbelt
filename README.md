@@ -8,7 +8,8 @@ Shareable skills. Install a skill, then just ask Claude — it handles the rest.
 |-|-------|---------------------------------------------------------------------------------------------------------------------------|
 | <img src="assets/video-downloader-icon.svg" width="20"/> | [**video-downloader**](video-downloader/) | Say "download this video" + paste a URL. Claude downloads it via yt-dlp. Supports YouTube, Reddit, Twitter/X, and others. |
 | <img src="assets/notes-manager-icon.svg" width="20"/> | [**notes-manager**](notes-manager/) | Say "create a note", "search notes", or "list my notes". Claude manages your macOS Notes app — create, read, search, append, delete, and organize notes and folders. |
-| <img src="assets/daily-journal-icon.svg" width="20"/> | [**daily-journal**](daily-journal/) | Say "journal this" or "what did I do today". Claude keeps a daily self-journal in Notes — timestamped first-person entries, daily review, weekly summaries. |
+| <img src="assets/daily-journal-icon.svg" width="20"/> | [**daily-journal**](daily-journal/) | Say "journal this" or "what did I do today". Claude keeps a daily self-journal in your Obsidian vault — timestamped first-person entries with tags and wikilinks for graph view, daily review, weekly summaries. |
+| <img src="assets/obsidian-writer-icon.svg" width="20"/> | [**obsidian-writer**](obsidian-writer/) | Say "create a note in obsidian", "search my notes", or "list obsidian folders". Claude manages your Obsidian vault — create, read, search, append, delete, and organize markdown notes. |
 
 ## Install
 
@@ -69,9 +70,27 @@ Just talk to Claude:
 > What did I do today?
 
 > Review my week
+
+> Create a note called "Project Ideas" in my obsidian vault
+
+> Search my obsidian notes for "authentication"
+
+> List notes in the projects folder
 ```
 
 Claude recognizes the intent, the skill activates, and handles the rest.
+
+### Triggering the Journal Manually
+
+The daily-journal skill runs automatically at the end of every work session. To trigger it manually:
+
+> Journal this — I built the auth system today
+
+> What did I do today?
+
+> Review my week
+
+> Search journal for "obsidian"
 
 ## License
 
